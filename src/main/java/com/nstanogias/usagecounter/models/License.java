@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 
@@ -20,12 +21,12 @@ import java.time.format.DateTimeFormatter;
 public class License {
 
   @Version
-  private Long version;
+  private Integer version;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long key;
   private LocalDateTime lockedUntil;
-  private Long currentUsage;
+  private Long currentUsage = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
   private String fromDate = LocalDateTime.now()
       .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
   private String toDate = LocalDateTime.now()

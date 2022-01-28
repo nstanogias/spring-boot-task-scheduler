@@ -33,7 +33,6 @@ public class UsageService {
     }
 
     public void processLicense(Long key) throws Exception {
-        LOGGER.info("here");
         License license = licenseRepository.getById(key);
         if (license.getLockedUntil() == null || license.getLockedUntil().isBefore(LocalDateTime.now())) {
             try {

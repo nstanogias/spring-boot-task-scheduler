@@ -14,19 +14,33 @@ import java.util.logging.Logger;
 public class UsageService {
     @Autowired
     private LicenseRepository licenseRepository;
+    @Autowired
+    private AnalyticsService analyticsService;
 
     static final Logger LOGGER = Logger.getLogger(UsageService.class.getName());
 
     @Scheduled(fixedRateString = "${interval}")
-    @SchedulerLock(name = "computeUsageTask")
     public void computeUsage() throws InterruptedException {
-        List<License> allLicenses = licenseRepository.findAll();
-        allLicenses.forEach(license -> sendMessageToBillingService(license));
+        List<License> allLicenses = licenseRepository.findAllByLocked(false);
+        allLicenses.forEach(license -> processLicense(license.getKey()));
 
         Thread.sleep(5000); //this is added to simulate latency from API
     }
 
-    private void sendMessageToBillingService(License license) {
-        LOGGER.info(license.toString());
+    public void processLicense(Long key) {
+        License license = licenseRepository.getById(key);
+        license.locked = true;
+        licenseRepository.save(license);
+
+        long usage = analyticsService.getUsageCount(key);
+        sendMessageToBillingService(license, usage);
+
+        license.locked = false;
+        licenseRepository.save(license);
+    }
+
+
+    private void sendMessageToBillingService(License license, long usage) {
+        LOGGER.info("license: " + license.toString() + ", usage: " + usage);
     }
 }

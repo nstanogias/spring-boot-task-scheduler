@@ -13,23 +13,28 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import org.springframework.data.annotation.Version;
 
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Version
 public class License {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long key;
-    private Long usage = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-    private String fromDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-    private String toDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-    private String product = "analytics";
 
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this, License.class);
-    }
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long key;
+  public boolean locked;
+  private String fromDate = LocalDateTime.now()
+      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+  private String toDate = LocalDateTime.now()
+      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+  private String product = "analytics";
+
+  public String toString() {
+    Gson gson = new Gson();
+    return gson.toJson(this, License.class);
+  }
 }

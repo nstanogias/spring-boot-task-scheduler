@@ -5,28 +5,27 @@ import lombok.AllArgsConstructor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import org.springframework.data.annotation.Version;
 
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Version
+@Setter
 public class License {
 
+  @Version
+  private Long version;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long key;
-  public boolean locked;
+  private LocalDateTime lockedUntil;
+  private Long currentUsage;
   private String fromDate = LocalDateTime.now()
       .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
   private String toDate = LocalDateTime.now()
